@@ -1,8 +1,13 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <cstdlib>
+#include <chrono>
+#include <string>
 
 using namespace std;
+
+#define CONTROL 8388608 //2^23
 
 typedef pair<int,int> ii;
 
@@ -30,10 +35,37 @@ void merge(vector<int> &array, int s, int e);
 
 int main(){
     // TODO: Seed your randomizer
+    using namespace std::chrono;
+    long long time = time_point_cast<nanoseconds>(system_clock::now()).time_since_epoch().count();
+    srand(time);
 
     // TODO: Get array size and thread count from user
+    int upper_bound;
+    int num_threads;
+
+    std::cout << "Enter upper bound (default=2^23): ";
+    std::string input;
+    std::getline(std::cin, input);
+
+    if (!input.empty()) {
+        try {
+        upper_bound = std::stoi(input);
+        } catch (std::invalid_argument&) {
+        std::cerr << "Invalid input. Using default CONTROL." << std::endl;
+        upper_bound = CONTROL;
+        }
+    } else {
+        upper_bound = CONTROL;  
+    }
+
+    std::cout << "Enter the number of threads (default=1): ";
+    std::cin >> num_threads;
 
     // TODO: Generate a random array of given size
+    vector<int> randArray;
+    for(int i = 0; i < upper_bound; i++){
+        randArray.push_back(rand() % upper_bound);
+    }
 
     // TODO: Call the generate_intervals method to generate the merge sequence
 
