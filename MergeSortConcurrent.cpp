@@ -67,9 +67,18 @@ int main(){
         randArray.push_back(rand() % upper_bound);
     }
 
-    // TODO: Call the generate_intervals method to generate the merge sequence
+	// TODO: Call the generate_intervals method to generate the merge sequence
+	vector<ii> intervals = generate_intervals(0, upper_bound - 1);
 
-    // TODO: Call merge on each interval in sequence
+	// TODO: Call merge on each interval in sequence
+	auto start = high_resolution_clock::now();
+	for (auto interval : intervals) {
+		merge(randArray, interval.first, interval.second);
+	}
+	auto stop = high_resolution_clock::now();
+
+	auto duration = duration_cast<microseconds>(stop - start);
+	std::cout << duration.count() << " ms" << endl;
 
     // Once you get the single-threaded version to work, it's time to implement 
     // the concurrent version. Good luck :)
