@@ -40,7 +40,7 @@ void merge_concurrent(vector<int> &array, const vector<ii> &intervals, int threa
 int main(){
     // TODO: Seed your randomizer
     std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng(123);
 
 
     // TODO: Get array size and thread count from user
