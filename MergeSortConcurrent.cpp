@@ -62,13 +62,20 @@ int main(){
         array_size = CONTROL;  
     }
 
-    std::cout << "Enter the number of threads (default=1): ";
+    std::cout << "Enter the number of threads: ";
     std::cin >> thread_count;
 
     // TODO: Generate a random array of given size
     vector<int> randArray;
-    for(int i = 0; i < array_size; i++){
-        randArray.push_back(rng() % array_size);
+    for(int i = 0; i < array_size; i++){ //Fill array from 1 to N
+        randArray.push_back(i+1);
+    }
+    int temp, randIndex;
+    for(int i = 0; i < array_size; i++){ //Shuffle
+        temp = randArray[i]; //Current to temp
+        randIndex = rand() % array_size; //Get random index
+        randArray[i] = randArray[randIndex]; //Set current to random index value
+        randArray[randIndex] = temp; //Set random index to current in temp
     }
 
 	// TODO: Call the generate_intervals method to generate the merge sequence
