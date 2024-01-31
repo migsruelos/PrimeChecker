@@ -5,8 +5,10 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <random>
 
 using namespace std;
+using namespace std::chrono;
 
 #define CONTROL 8388608 //2^23
 
@@ -37,9 +39,9 @@ void merge_concurrent(vector<int> &array, const vector<ii> &intervals, int threa
 
 int main(){
     // TODO: Seed your randomizer
-    using namespace std::chrono;
-    long long time = time_point_cast<nanoseconds>(system_clock::now()).time_since_epoch().count();
-    srand(time);
+    std::random_device rd;
+    std::mt19937 rng(rd());
+
 
     // TODO: Get array size and thread count from user
     int array_size;
@@ -66,7 +68,7 @@ int main(){
     // TODO: Generate a random array of given size
     vector<int> randArray;
     for(int i = 0; i < array_size; i++){
-        randArray.push_back(rand() % array_size);
+        randArray.push_back(rng() % array_size);
     }
 
 	// TODO: Call the generate_intervals method to generate the merge sequence
@@ -74,13 +76,21 @@ int main(){
 
 	// TODO: Call merge on each interval in sequence
 	auto start = high_resolution_clock::now();
-	for (auto interval : intervals) {
-		merge(randArray, interval.first, interval.second);
-	}
-	auto stop = high_resolution_clock::now();
+    for (auto interval : intervals) {
+        merge(randArray, interval.first, interval.second);
+    }
+    auto stop = high_resolution_clock::now();
 
-	auto duration = duration_cast<microseconds>(stop - start);
-	std::cout << duration.count() << " ms" << endl;
+    auto duration = duration_cast<microseconds>(stop - start);
+    std::cout << "Single-threaded merge sort time: " << duration.count() << " ms" << endl;
+    
+    // Call the concurrent merge sort function
+    auto start_concurrent = high_resolution_clock::now();
+    merge_concurrent(randArray, intervals, thread_count);
+    auto stop_concurrent = high_resolution_clock::now();
+
+    auto duration_concurrent = duration_cast<microseconds>(stop_concurrent - start_concurrent);
+    std::cout << "Concurrent merge sort time: " << duration_concurrent.count() << " ms" << endl;
 
     // Once you get the single-threaded version to work, it's time to implement 
     // the concurrent version. Good luck :)
