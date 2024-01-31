@@ -6,6 +6,8 @@
 #include <string>
 #include <thread>
 #include <random>
+#include <algorithm>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -98,6 +100,14 @@ int main(){
 
     auto duration_concurrent = duration_cast<microseconds>(stop_concurrent - start_concurrent);
     std::cout << "Concurrent merge sort time: " << duration_concurrent.count() << " ms" << endl;
+    
+    // Sanity check
+    bool isSorted = is_sorted(randArray.begin(), randArray.end());
+    if (isSorted) {
+        std::cout << "Array is sorted.\n";
+    } else {
+        std::cout << "Array is not sorted!\n";
+    }
 
     // Once you get the single-threaded version to work, it's time to implement 
     // the concurrent version. Good luck :)
