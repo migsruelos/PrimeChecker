@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <chrono>
 #include <string>
+#include <thread>
 
 using namespace std;
 
@@ -32,6 +33,7 @@ s     : int         - start index of merge
 e     : int         - end index (inclusive) of merge
 */
 void merge(vector<int> &array, int s, int e);
+void merge_concurrent(vector<int> &array, const vector<ii> &intervals, int thread_count);
 
 int main(){
     // TODO: Seed your randomizer
@@ -40,35 +42,35 @@ int main(){
     srand(time);
 
     // TODO: Get array size and thread count from user
-    int upper_bound;
-    int num_threads;
+    int array_size;
+    int thread_count;
 
-    std::cout << "Enter upper bound (default=2^23): ";
+    std::cout << "Enter array size (default=2^23): ";
     std::string input;
     std::getline(std::cin, input);
 
     if (!input.empty()) {
         try {
-        upper_bound = std::stoi(input);
+        array_size = std::stoi(input);
         } catch (std::invalid_argument&) {
         std::cerr << "Invalid input. Using default CONTROL." << std::endl;
-        upper_bound = CONTROL;
+        array_size = CONTROL;
         }
     } else {
-        upper_bound = CONTROL;  
+        array_size = CONTROL;  
     }
 
     std::cout << "Enter the number of threads (default=1): ";
-    std::cin >> num_threads;
+    std::cin >> thread_count;
 
     // TODO: Generate a random array of given size
     vector<int> randArray;
-    for(int i = 0; i < upper_bound; i++){
-        randArray.push_back(rand() % upper_bound);
+    for(int i = 0; i < array_size; i++){
+        randArray.push_back(rand() % array_size);
     }
 
 	// TODO: Call the generate_intervals method to generate the merge sequence
-	vector<ii> intervals = generate_intervals(0, upper_bound - 1);
+	vector<ii> intervals = generate_intervals(0, array_size - 1);
 
 	// TODO: Call merge on each interval in sequence
 	auto start = high_resolution_clock::now();
@@ -141,5 +143,32 @@ void merge(vector<int> &array, int s, int e) {
             array[i] = right[r_ptr];
             r_ptr++;
         }
+    }
+}
+
+void merge_concurrent(vector<int> &array, const vector<ii> &intervals, int thread_count) {
+    vector<thread> threads;
+
+    int intervals_per_thread = intervals.size() / thread_count;
+    int start = 0;
+
+    for (int i = 0; i < thread_count; i++) {
+        int end = start + intervals_per_thread - 1;
+        if (i == thread_count - 1) {
+            
+            end = intervals.size() - 1;
+        }
+
+        threads.emplace_back([&, start, end]() {
+            for (int j = start; j <= end; j++) {
+                merge(array, intervals[j].first, intervals[j].second);
+            }
+        });
+
+        start = end + 1;
+    }
+
+    for (auto &thread : threads) {
+        thread.join();
     }
 }
