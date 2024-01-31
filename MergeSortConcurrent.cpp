@@ -13,6 +13,7 @@ using namespace std;
 using namespace std::chrono;
 
 #define CONTROL 8388608 //2^23
+#define RAND_SEED 1
 
 typedef pair<int,int> ii;
 
@@ -41,9 +42,7 @@ void merge_concurrent(vector<int> &array, const vector<ii> &intervals, int threa
 
 int main(){
     // TODO: Seed your randomizer
-    std::random_device rd;
-    std::mt19937 rng(123);
-
+    srand(RAND_SEED);
 
     // TODO: Get array size and thread count from user
     int array_size;
